@@ -31,6 +31,14 @@
     <div id="gameOver">
         <h1>¡HAS MUERTO!</h1>
         <h2>Puntuación Final: <span id="finalScore">0</span></h2>
+        <div id="nameInputSection">
+            <input type="text" id="playerName" placeholder="Tu Nombre" maxlength="15" autocomplete="off" />
+            <button id="saveScoreButton">Guardar Puntuación</button>
+        </div>
+        <div id="leaderboardSection" style="display: none; margin-top: 20px; max-height: 200px; overflow-y: auto;">
+            <h3>🏆 Mejores Puntuaciones 🏆</h3>
+            <ul id="leaderboardList" style="list-style: none; padding: 0; margin: 0; text-align: left;"></ul>
+        </div>
         <button id="restartButton">🔴 Jugar de Nuevo 🔫</button>
     </div>
 

@@ -14,6 +14,11 @@ const scoreElement = document.getElementById('score')!;
 const gameOverElement = document.getElementById('gameOver')!;
 const finalScoreElement = document.getElementById('finalScore')!;
 const restartButton = document.getElementById('restartButton')!;
+const playerNameInput = document.getElementById('playerName') as HTMLInputElement;
+const saveScoreButton = document.getElementById('saveScoreButton') as HTMLButtonElement;
+const nameInputSection = document.getElementById('nameInputSection')!;
+const leaderboardSection = document.getElementById('leaderboardSection')!;
+const leaderboardList = document.getElementById('leaderboardList')!;
 
 let idAnimacion: number;
 let spawnInterval: number;
@@ -114,6 +119,10 @@ function endGame() {
     clearInterval(spawnInterval);
     finalScoreElement.innerHTML = gameState.puntuacion.toString();
     gameOverElement.style.display = 'block';
+    nameInputSection.style.display = 'block';
+    playerNameInput.value = '';
+    setTimeout(() => playerNameInput.focus(), 100);
+    fetchLeaderboard();
 }
 
 function animar() {
@@ -243,5 +252,48 @@ function startGame() {
 }
 
 restartButton.addEventListener('click', startGame);
+
+async function fetchLeaderboard() {
+    try {
+        const res = await fetch('/api/leaderboard');
+        if (res.ok) {
+            const scores = await res.json();
+            renderLeaderboard(scores);
+        }
+    } catch(e) {
+        console.error("Error fetching leaderboard", e);
+    }
+}
+
+function renderLeaderboard(scores: any[]) {
+    leaderboardList.innerHTML = scores.map((s, i) => 
+        `<li style="padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <b>${i + 1}. ${s.name}</b>: <span style="float: right; color: #f1c40f;">${s.score}</span>
+        </li>`
+    ).join('');
+    leaderboardSection.style.display = 'block';
+}
+
+saveScoreButton.addEventListener('click', async () => {
+    const name = playerNameInput.value.trim();
+    if (!name) return;
+    saveScoreButton.disabled = true;
+    try {
+        const res = await fetch('/api/leaderboard', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, score: gameState.puntuacion })
+        });
+        if (res.ok) {
+            const scores = await res.json();
+            renderLeaderboard(scores);
+            nameInputSection.style.display = 'none';
+        }
+    } catch(e) {
+        console.error("Error saving score", e);
+    } finally {
+        saveScoreButton.disabled = false;
+    }
+});
 
 startGame();

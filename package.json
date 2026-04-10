@@ -9,7 +9,11 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "vite": "^8.0.8",
-    "typescript": "^6.0.2"
+    "concurrently": "^9.2.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.8"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.17.2"
   }
 }
