@@ -22,6 +22,9 @@ const leaderboardList = document.getElementById('leaderboardList')!;
 
 let idAnimacion: number;
 let spawnInterval: number;
+let lastTime = 0;
+const FPS = 60;
+const frameInterval = 1000 / FPS;
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
@@ -125,9 +128,14 @@ function endGame() {
     fetchLeaderboard();
 }
 
-function animar() {
+function animar(time: number) {
     if (gameState.isGameOver) return;
     idAnimacion = requestAnimationFrame(animar);
+
+    const deltaTime = time - lastTime;
+    if (deltaTime < frameInterval) return;
+
+    lastTime = time - (deltaTime % frameInterval);
 
     dibujarFondo();
 
@@ -265,7 +273,8 @@ function startGame() {
 
     clearInterval(spawnInterval);
     spawnEnemigos();
-    animar();
+    lastTime = performance.now();
+    requestAnimationFrame(animar);
 }
 
 restartButton.addEventListener('click', startGame);
