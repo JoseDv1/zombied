@@ -133,6 +133,21 @@ function animar() {
 
     if (gameState.jugador) {
         gameState.jugador.actualizar(ctx);
+        
+        if (inputState.joystickAim.active) {
+            inputState.mouseX = gameState.jugador.x + inputState.joystickAim.x * 100;
+            inputState.mouseY = gameState.jugador.y + inputState.joystickAim.y * 100;
+            
+            if (gameState.cooldownFuego <= 0) {
+                gameState.cooldownFuego = 0.15; // 0.15 segundos de cooldown
+                const velocidadDeBala = 12;
+                const velocidad = {
+                    x: inputState.joystickAim.x * velocidadDeBala,
+                    y: inputState.joystickAim.y * velocidadDeBala
+                };
+                gameState.proyectiles.push(new Projectil(gameState.jugador.x, gameState.jugador.y, 6, '#f1c40f', velocidad));
+            }
+        }
     }
 
     gameState.explosiones.forEach(e => e.actualizar(ctx));
@@ -219,6 +234,7 @@ function animar() {
 
     if (gameState.cooldownE > 0) gameState.cooldownE -= 1 / 60;
     if (gameState.cooldownQ > 0) gameState.cooldownQ -= 1 / 60;
+    if (gameState.cooldownFuego > 0) gameState.cooldownFuego -= 1 / 60;
     
     document.getElementById('cooldownE')!.innerText = gameState.cooldownE > 0 ? Math.ceil(gameState.cooldownE) + 's' : '¡Listo!';
     document.getElementById('cooldownQ')!.innerText = gameState.cooldownQ > 0 ? Math.ceil(gameState.cooldownQ) + 's' : '¡Listo!';
@@ -240,6 +256,7 @@ function startGame() {
     gameState.explosiones = [];
     gameState.cooldownE = 0;
     gameState.cooldownQ = 0;
+    gameState.cooldownFuego = 0;
     gameState.puntuacion = 0;
     gameState.isGameOver = false;
 

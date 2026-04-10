@@ -59,10 +59,18 @@ export class Jugador extends Entity {
 
     override actualizar(ctx: CanvasRenderingContext2D) {
         this.dibujar(ctx);
-        // Movimiento (bloquear para no salir de pantalla)
+        // Movimiento por teclado (bloquear para no salir de pantalla)
         if (inputState.teclas.w && this.y - this.radio > 0) this.y -= this.velocidad;
         if (inputState.teclas.s && this.y + this.radio < gameState.canvasHeight) this.y += this.velocidad;
         if (inputState.teclas.a && this.x - this.radio > 0) this.x -= this.velocidad;
         if (inputState.teclas.d && this.x + this.radio < gameState.canvasWidth) this.x += this.velocidad;
+        
+        // Movimiento por joystick
+        if (inputState.joystickMove.x !== 0 || inputState.joystickMove.y !== 0) {
+            const newX = this.x + inputState.joystickMove.x * this.velocidad;
+            const newY = this.y + inputState.joystickMove.y * this.velocidad;
+            if (newX - this.radio > 0 && newX + this.radio < gameState.canvasWidth) this.x = newX;
+            if (newY - this.radio > 0 && newY + this.radio < gameState.canvasHeight) this.y = newY;
+        }
     }
 }

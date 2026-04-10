@@ -18,6 +18,7 @@ export const gameState = {
     explosiones: [] as any[],
     cooldownE: 0,
     cooldownQ: 0,
+    cooldownFuego: 0,
     puntuacion: 0,
     isGameOver: false,
     canvasWidth: window.innerWidth,
